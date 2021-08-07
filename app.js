@@ -9,7 +9,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb://localhost:27017/votingdb", {useNewUrlParser: true});
+mongoose.connect("mongodb://localhost:27017/votingdb", {useNewUrlParser: true, useUnifiedTopology: true});
 
 const userSchema = {
   username: String,
@@ -19,7 +19,7 @@ const userSchema = {
 const pollSchema = {
   id: Number,
   title: String,
-  choices: Array,
+  choices: Array
 };
 
 const User = mongoose.model("User", userSchema);
@@ -67,6 +67,32 @@ app.post("/register", (req, res) => {
     console.log("Try Again!");
     res.redirect("/register");
   };
+});
+
+app.get("/dashboard", (req, res) => {
+  Poll.find({}, (err, docs) => {
+    if(err) {
+      console.log(err)
+    } else {
+      res.render("dashboard", {polls: docs})
+    };
+  });
+});
+
+app.get("/insertpolls", (req, res) => {
+  let poll1 = new Poll({
+    id: 1,
+    title: "Sample Question 1",
+    choices: ["option1", "option2", "option3", "option4"]
+  });
+  let poll2 = new Poll({
+    id: 2,
+    title: "Sample Question 2",
+    choices: ["option1", "option2", "option3"]
+  });
+  poll1.save();
+  poll2.save();
+  console.log("Poll successfully added!");
 });
 
 app.listen(3000, () => {

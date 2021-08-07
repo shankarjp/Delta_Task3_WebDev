@@ -6,5 +6,15 @@
   </head>
   <body>
     <h1>Dashboard</h1>
+    <% for(var i=0; i<polls.length; i++) { %>
+      <p> <%= polls[i].title %></p>
+      <form action="/dashboard" method="post">
+        <% for(var j=0; j<polls[i].choices.length; j++) { %>
+            <input type="radio"  name="choice" value="choice" />
+            <label for="choice" > <%= polls[i].choices[j] %> </label><br>
+        <% } %>
+      </form>
+      <br>
+    <% } %>
   </body>
 </html>
