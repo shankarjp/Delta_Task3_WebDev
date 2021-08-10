@@ -55,7 +55,8 @@ const teamSchema = new mongoose.Schema({
     required: true
   },
   members: [userSchema],
-  admins: [userSchema]
+  admins: [userSchema],
+  polls: [pollSchema]
 });
 
 const Team = mongoose.model('Team', teamSchema);
@@ -77,7 +78,6 @@ app.get("/login", (req, res) => {
   } else {
     res.render("login");
   };
-
 });
 
 app.post("/login", (req, res) => {
@@ -140,7 +140,8 @@ app.post("/createteam", (req, res) => {
       let team = new Team({
         teamname: req.body.teamname,
         members: [],
-        admins: [docs]
+        admins: [docs],
+        polls: []
       });
       team.save();
       console.log("Team Successfully Created!");
@@ -193,6 +194,14 @@ app.post("/addmember/:team", (req, res) => {
 
 
 //Add Admins page
+app.get("/addadmin/:team", (req, res) => {
+  if(localStorage.getItem('user') !== 'null') {
+    res.render("addadmin", {team: req.params.team});
+  } else {
+    res.redirect("/login");
+  }
+})
+
 app.post("/addadmin/:team", (req, res) => {
   let adminlist= [];
   Team.findOne({teamname: req.params.team}, (err, docs) => {
@@ -218,57 +227,59 @@ app.post("/addadmin/:team", (req, res) => {
     };
   });
   res.redirect("/");
-  // if(localStorage.getItem('user') !== null) {
-  //   User.findOne({username: req.body.username}, (err, docs) => {
-  //     if(err) {
-  //       console.log(err);
-  //     } else {
-  //       if(docs.length !== 0) {
-  //         Team.updateOne({teamname: req.params.team}, {'$push': {admins: docs}}, (err, result) => {
-  //           if(err) {
-  //             console.log(err)
-  //           };
-  //         });
-  //       } else {
-  //         console.log("No User Found!");
-  //       };
-  //     };
-  //   });
-  // } else {
-  //   res.send("Permission Denied!");
-  // }
 });
 
 
 //Create Poll page
-app.post("/createpoll", (req, res) => {
-  if(localStorage.getItem('user') === 'null') {
-    console.log(req.body);
-    Team.findOne({teamname: req.body.teamname}, (err, docs) => {
+let optionNumber = 1;
+app.get("/createpoll/:team", (req, res) => {
+  if(localStorage.getItem('user') !== 'null') {
+    optionNumber = 1;
+    res.render("createpoll", {team: req.params.team, n: optionNumber});
+  } else {
+    res.redirect("/login");
+  };
+})
+
+app.post("/createpoll/:team", (req, res) => {
+  console.log(req.body);
+  if(req.body.action === "add") {
+    optionNumber++;
+    res.render("createpoll", {team: req.params.team, n: optionNumber});
+  } else {
+    Team.findOne({teamname: req.params.team}, (err, docs) => {
       if(err) {
         console.log(err);
       } else {
         if(docs.length !== 0) {
           let poll = new Poll({
-            // user: localStorage.getItem('user'),
-            user: req.body.user,
+            user: localStorage.getItem('user'),
             question: req.body.question,
             options: req.body.options.map(option => ({
               option,
               votes: 0
             })),
-            teamname: req.body.teamname
+            teamname: req.params.teamname
           });
           poll.save();
           console.log("Poll successfully added!");
+          Team.updateOne({teamname: req.params.team}, {'$push': {polls: poll}}, (err, result) => {
+            if(err) {
+              console.log(err);
+            };
+          });
+          User.updateOne({username: localStorage.getItem('user')}, {'$push': {polls: poll}}, (err, result) => {
+            if(err) {
+              console.log(err);
+            };
+          });
         } else {
           console.log("No Team Found!");
         };
       };
     });
-  } else {
-    res.send("Permission Denied!");
   };
+  res.redirect("/");
 });
 
 //View All Polls Team Dashboard

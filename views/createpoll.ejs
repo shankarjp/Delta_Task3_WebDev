@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Create Poll</title>
+  </head>
+  <body>
+    <h1>Create Poll</h1>
+    <form class="" action='/createpoll/<%= team %>' method="post">
+      <label for="question">Question</label>
+      <input type="text" name="question" value="">
+      <label for="">Options</label>
+      <button type="submit" name="action" value="add">+</button>
+      <% for(let i=0; i<n; i++) { %>
+        <input type="text" name="options[<%= i %>]" value="">
+      <% } %>
+      <button type="submit" name="button">Create Poll</button>
+    </form>
+    <script type="text/javascript">
+      document.getElementById("addOption").addEventListener("click", (event) => {
+        event.preventDefault();
+        console.log("I got clicked!");
+      });
+    </script>
+  </body>
+</html>
