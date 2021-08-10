@@ -188,30 +188,55 @@ app.post("/addmember/:team", (req, res) => {
       };
     };
   });
+  res.redirect("/");
 });
 
 
 //Add Admins page
 app.post("/addadmin/:team", (req, res) => {
-  if(localStorage.getItem('user') !== null) {
-    User.findOne({username: req.body.username}, (err, docs) => {
-      if(err) {
-        console.log(err);
-      } else {
-        if(docs.length !== 0) {
-          Team.updateOne({teamname: req.params.team}, {'$push': {admins: docs}}, (err, result) => {
+  let adminlist= [];
+  Team.findOne({teamname: req.params.team}, (err, docs) => {
+    for(let i=0; i<docs.admins.length; i++) {
+      adminlist.push(docs.admins[i].username);
+      if(adminlist.includes(localStorage.getItem('user'))) {
+        User.findOne({username: req.body.username}, (err, user) => {
+          Team.updateOne({teamname: req.params.team}, {'$push': {admins: user}}, (err, result) => {
             if(err) {
-              console.log(err)
+              console.log(err);
             };
           });
-        } else {
-          console.log("No User Found!");
-        };
+        })
+        User.updateOne({username: req.body.username}, {'$push': {teams: {teamname: req.params.team}}}, (err, result) => {
+          if(err) {
+            console.log(err);
+          };
+        });
+        console.log("Admin Successfully Added!");
+      } else {
+        console.log("Permission Denied!");
       };
-    });
-  } else {
-    res.send("Permission Denied!");
-  }
+    };
+  });
+  res.redirect("/");
+  // if(localStorage.getItem('user') !== null) {
+  //   User.findOne({username: req.body.username}, (err, docs) => {
+  //     if(err) {
+  //       console.log(err);
+  //     } else {
+  //       if(docs.length !== 0) {
+  //         Team.updateOne({teamname: req.params.team}, {'$push': {admins: docs}}, (err, result) => {
+  //           if(err) {
+  //             console.log(err)
+  //           };
+  //         });
+  //       } else {
+  //         console.log("No User Found!");
+  //       };
+  //     };
+  //   });
+  // } else {
+  //   res.send("Permission Denied!");
+  // }
 });
 
 
