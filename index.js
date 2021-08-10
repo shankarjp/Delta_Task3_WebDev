@@ -293,20 +293,26 @@ app.get("/viewpoll/:team", (req, res) => {
       };
     });
   } else {
-    res.send("Permission Denied!");
+    res.redirect("/login");
   };
 });
 
 //View User Created Polls
 app.get("/createdpolls", (req, res) => {
-  if(localStorage.getItem('user') !== null) {
-    Poll.find({user: req.body.username}, (err, docs) => {
-      User.updateOne({username: req.body.username}, {'$set': {polls: docs}}, (err, result) => {
+  if(localStorage.getItem('user') !== 'null') {
+    Poll.find({user: localStorage.getItem('user')}, (err, docs) => {
+      User.updateOne({username: localStorage.getItem('user')}, {'$set': {polls: docs}}, (err, result) => {
         if(err) {
           console.log(err);
         };
-        console.log(result);
       });
+    });
+    User.findOne({username: localStorage.getItem('user')}, (err, docs) => {
+      if(err) {
+        console.log(err);
+      } else {
+        res.render("createdpolls", {docs: docs});
+      };
     });
     console.log("User Updated");
   } else {

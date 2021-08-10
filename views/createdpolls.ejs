@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Created Polls</title>
+  </head>
+  <body>
+    <h1>Created Polls</h1>
+    <% for(let i=0; i<docs.polls.length; i++) { %>
+      <h2><%= docs.polls[i].question %></h2>
+      <% for(let j=0; j<docs.polls[i].options.length; j++) { %>
+        <p><%= docs.polls[i].options[j].option %><p>
+      <% } %>
+    <% } %>
+  </body>
+</html>
