@@ -289,7 +289,7 @@ app.get("/viewpoll/:team", (req, res) => {
       if(err) {
         console.log(err);
       } else {
-        res.render("viewpoll", {docs: docs});
+        res.render("viewpoll", {docs: docs, teamname: req.params.team});
       };
     });
   } else {

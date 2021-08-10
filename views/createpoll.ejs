@@ -5,6 +5,11 @@
     <title>Create Poll</title>
   </head>
   <body>
+    <a href="/">Home</a>
+    <a href='/viewpoll/<%= team %>'>Team Dashboard</a>
+    <a href="/createdpolls">My Polls</a>
+    <a href="/logout">Logout</a>
+    <h1><%= team %></h1>
     <h1>Create Poll</h1>
     <form class="" action='/createpoll/<%= team %>' method="post">
       <label for="question">Question</label>

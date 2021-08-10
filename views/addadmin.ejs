@@ -5,6 +5,11 @@
     <title>Add Admin</title>
   </head>
   <body>
+    <a href="/">Home</a>
+    <a href="/viewpoll/<%= team %>">Team Dashboard</a>
+    <a href="/createdpolls">My Polls</a>
+    <a href="/logout">Logout</a>
+    <h1><%= team %></h1>
     <h1>Add Admin</h1>
     <form class="" action='/addadmin/<%= team %>' method="post">
       <label for="username">Username</label>

@@ -5,9 +5,13 @@
     <title>Home Page</title>
   </head>
   <body>
-    <h1>Hello World!</h1>
+    <a href="/">Home</a>
+    <a href="/createteam">Create Team</a>
+    <a href="/createdpolls">My Polls</a>
+    <a href="/logout">Logout</a>
+    <h1>Teams</h1>
     <% for(i=0; i<docs.teams.length; i++) { %>
-      <h2><%= docs.teams[i].teamname %></h2>
+      <h2><a href='/viewpoll/<%= docs.teams[i].teamname %>'><%= docs.teams[i].teamname %></a></h2>
     <% } %>
   </body>
 </html>
