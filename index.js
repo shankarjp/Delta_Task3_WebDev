@@ -318,48 +318,17 @@ app.get("/createdpolls", (req, res) => {
   } else {
     res.send("Permission Denied!");
   };
-
-  // User.findOne({username: req.params.user}, (err, user) => {
-  //   if(err) {
-  //     console.log(err);
-  //   } else {
-  //     Poll.find({user: req.params.user}, (err, docs) => {
-  //       for(var i=0; i<docs.length; i++) {
-  //         let poll = {
-  //           question: docs[i].question,
-  //           options: docs[i].options,
-  //           voted: docs[i].voted,
-  //           created: docs[i].created
-  //         };
-  //         console.log(poll);
-  //         user.polls = user.polls.push(poll);
-  //         console.log(user.polls);
-  //       };
-  //     });
-  //   };
-  //   console.log(user);
-  // });
-
-  // let pollarray = []
-  // Poll.find({user: req.params.user}, (err, docs) => {
-  //   if(err) {
-  //     console.log(err);
-  //   } else {
-  //     pollarray = docs;
-  //   };
-  // });
-  // User.updateOne({username: req.params.user}, { $set: {polls: pollarray} }, (err, docs) => {
-  //   if(err) {
-  //     console.log(err);
-  //   } else {
-  //     console.log("Updated document: ", docs);
-  //   };
-  // });
 });
 
 app.get("/", (req, res) => {
   if(localStorage.getItem('user') !== 'null') {
-    res.render("home");
+    User.findOne({username: localStorage.getItem('user')}, (err, docs) => {
+      if(err) {
+        console.log(err);
+      } else {
+        res.render("home", {docs: docs});
+      };
+    });
     console.log(`Logged in as ${localStorage.getItem('user')}`);
   } else {
     console.log("Permission Denied!");

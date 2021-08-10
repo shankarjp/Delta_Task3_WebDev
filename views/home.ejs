@@ -6,5 +6,8 @@
   </head>
   <body>
     <h1>Hello World!</h1>
+    <% for(i=0; i<docs.teams.length; i++) { %>
+      <h2><%= docs.teams[i].teamname %></h2>
+    <% } %>
   </body>
 </html>
