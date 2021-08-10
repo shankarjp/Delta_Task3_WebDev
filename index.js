@@ -259,7 +259,7 @@ app.post("/createpoll/:team", (req, res) => {
               option,
               votes: 0
             })),
-            teamname: req.params.teamname
+            teamname: req.params.team
           });
           poll.save();
           console.log("Poll successfully added!");
@@ -284,13 +284,12 @@ app.post("/createpoll/:team", (req, res) => {
 
 //View All Polls Team Dashboard
 app.get("/viewpoll/:team", (req, res) => {
-  if(localStorage.getItem('user') !== null) {
+  if(localStorage.getItem('user') !== 'null') {
     Poll.find({teamname: req.params.team}, (err, docs) => {
       if(err) {
         console.log(err);
       } else {
-        console.log("Query Recieved!");
-        res.json(docs);
+        res.render("viewpoll", {docs: docs});
       };
     });
   } else {
