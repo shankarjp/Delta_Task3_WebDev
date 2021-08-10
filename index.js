@@ -1,11 +1,15 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const ejs = require("ejs");
 const mongoose = require("mongoose");
 
 const app = express();
 
+app.set('view engine', 'ejs');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
 //Database Setup
 mongoose.connect("mongodb://localhost:27017/votingdb", { useNewUrlParser: true, useUnifiedTopology: true });
@@ -67,26 +71,35 @@ if (typeof localStorage === "undefined" || localStorage === null) {
 localStorage.setItem('user', 'null');
 
 //Login Page
-app.post("/login", (req, res) => {
-  if(localStorage.getItem('user') === null) {
-    User.find({username: req.body.username, password: req.body.password}, (err, docs) => {
-      if(err) {
-        console.log(err);
-      } else {
-        if(docs.length !== 0) {
-          console.log("Successful Login!");
-          localStorage.setItem('user', req.body.username);
-        } else {
-          console.log("Try Again!");
-        };
-      };
-    });
+app.get("/login", (req, res) => {
+  if(localStorage.getItem('user') !== 'null') {
+    res.redirect("/");
   } else {
-    console.log("Successful Login!");
+    res.render("login");
   };
+
+});
+
+app.post("/login", (req, res) => {
+  User.find({username: req.body.username, password: req.body.password}, (err, docs) => {
+    if(err) {
+      console.log(err);
+    } else {
+      if(docs.length !== 0) {
+        localStorage.setItem('user', req.body.username);
+        res.redirect("/");
+      } else {
+        console.log("Try Again!");
+      };
+    };
+  });
 });
 
 //Register Page
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+
 app.post("/register", (req, res) => {
   if(req.body.confirmpassword === req.body.password) {
     let user = new User({
@@ -95,6 +108,7 @@ app.post("/register", (req, res) => {
     });
     user.save();
     console.log("User successfully added!");
+    res.redirect("/");
     localStorage.setItem('user', req.body.username);
   } else {
     console.log("Try Again!");
@@ -280,16 +294,18 @@ app.get("/createdpolls", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  if(localStorage.getItem('user') !== null) {
-    res.send("Hello World!");
+  if(localStorage.getItem('user') !== 'null') {
+    res.render("home");
+    console.log(`Logged in as ${localStorage.getItem('user')}`);
   } else {
-    res.send("Permission Denied!");
+    console.log("Permission Denied!");
+    res.redirect("/register");
   };
 });
 
 //Voting page
 
 
-app.listen(4000, () => {
-  console.log("Server running on port 4000");
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
 });
