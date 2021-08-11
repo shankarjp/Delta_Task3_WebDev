@@ -90,6 +90,7 @@ app.post("/login", (req, res) => {
         res.redirect("/");
       } else {
         console.log("Try Again!");
+        res.redirect("/login");
       };
     };
   });
@@ -112,6 +113,7 @@ app.post("/register", (req, res) => {
     localStorage.setItem('user', req.body.username);
   } else {
     console.log("Try Again!");
+    res.redirect("/register");
   };
 });
 
@@ -133,23 +135,33 @@ app.get("/createteam", (req, res) => {
 })
 
 app.post("/createteam", (req, res) => {
-  User.findOne({username: localStorage.getItem('user')}, (err, docs) => {
+  Team.find({teamname: req.body.teamname}, (err, team) => {
     if(err) {
       console.log(err);
     } else {
-      let team = new Team({
-        teamname: req.body.teamname,
-        members: [],
-        admins: [docs],
-        polls: []
-      });
-      team.save();
-      console.log("Team Successfully Created!");
-    };
-  });
-  User.updateOne({username: localStorage.getItem('user')}, {'$push': {teams: {teamname: req.body.teamname}}}, (err, result) => {
-    if(err) {
-      console.log(err);
+      if(team.length === 0) {
+        User.findOne({username: localStorage.getItem('user')}, (err, docs) => {
+          if(err) {
+            console.log(err);
+          } else {
+            let team = new Team({
+              teamname: req.body.teamname,
+              members: [],
+              admins: [docs],
+              polls: []
+            });
+            team.save();
+            console.log("Team Successfully Created!");
+          };
+        });
+        User.updateOne({username: localStorage.getItem('user')}, {'$push': {teams: {teamname: req.body.teamname}}}, (err, result) => {
+          if(err) {
+            console.log(err);
+          };
+        });
+      } else {
+        console.log("Team Already Exists!");
+      };
     };
   });
   res.redirect("/");
@@ -165,27 +177,44 @@ app.get("/addmember/:team", (req, res) => {
 });
 
 app.post("/addmember/:team", (req, res) => {
-  let adminlist= [];
-  Team.findOne({teamname: req.params.team}, (err, docs) => {
-    for(let i=0; i<docs.admins.length; i++) {
-      adminlist.push(docs.admins[i].username);
-      if(adminlist.includes(localStorage.getItem('user'))) {
-        User.findOne({username: req.body.username}, (err, user) => {
-          Team.updateOne({teamname: req.params.team}, {'$push': {members: user}}, (err, result) => {
-            if(err) {
-              console.log(err);
+  User.find({username: req.body.username}, (err, info) => {
+    if(err) {
+      console.log(err);
+    } else {
+      if(info.length !== 0) {
+        teamlist = [];
+        for(let j=0; j< info[0].teams.length; j++) {
+          teamlist.push(info[0].teams[j].teamname);
+        };
+        if(teamlist.includes(req.params.team)) {
+          console.log("User Already part of Team!");
+        } else {
+          let adminlist= [];
+          Team.findOne({teamname: req.params.team}, (err, docs) => {
+            for(let i=0; i<docs.admins.length; i++) {
+              adminlist.push(docs.admins[i].username);
+            };
+            if(adminlist.includes(localStorage.getItem('user'))) {
+              User.findOne({username: req.body.username}, (err, user) => {
+                Team.updateOne({teamname: req.params.team}, {'$push': {members: user}}, (err, result) => {
+                  if(err) {
+                    console.log(err);
+                  };
+                });
+              })
+              User.updateOne({username: req.body.username}, {'$push': {teams: {teamname: req.params.team}}}, (err, result) => {
+                if(err) {
+                  console.log(err);
+                };
+              });
+              console.log("Member Successfully Added!");
+            } else {
+              console.log("Permission Denied!");
             };
           });
-        })
-        User.updateOne({username: req.body.username}, {'$push': {teams: {teamname: req.params.team}}}, (err, result) => {
-          if(err) {
-            console.log(err);
-          };
-        });
-        console.log("Member Successfully Added!");
+        }
       } else {
-        console.log("Permission Denied!");
-        res.redirect("/");
+        console.log("User Not Found!");
       };
     };
   });
@@ -203,26 +232,44 @@ app.get("/addadmin/:team", (req, res) => {
 })
 
 app.post("/addadmin/:team", (req, res) => {
-  let adminlist= [];
-  Team.findOne({teamname: req.params.team}, (err, docs) => {
-    for(let i=0; i<docs.admins.length; i++) {
-      adminlist.push(docs.admins[i].username);
-      if(adminlist.includes(localStorage.getItem('user'))) {
-        User.findOne({username: req.body.username}, (err, user) => {
-          Team.updateOne({teamname: req.params.team}, {'$push': {admins: user}}, (err, result) => {
-            if(err) {
-              console.log(err);
+  User.find({username: req.body.username}, (err, info) => {
+    if(err) {
+      console.log(err);
+    } else {
+      if(info.length !== 0) {
+        teamlist = [];
+        for(let j=0; j< info[0].teams.length; j++) {
+          teamlist.push(info[0].teams[j].teamname);
+        };
+        if(teamlist.includes(req.params.team)) {
+          console.log("User Already part of Team!");
+        } else {
+          let adminlist= [];
+          Team.findOne({teamname: req.params.team}, (err, docs) => {
+            for(let i=0; i<docs.admins.length; i++) {
+              adminlist.push(docs.admins[i].username);
+            };
+            if(adminlist.includes(localStorage.getItem('user'))) {
+              User.findOne({username: req.body.username}, (err, user) => {
+                Team.updateOne({teamname: req.params.team}, {'$push': {admins: user}}, (err, result) => {
+                  if(err) {
+                    console.log(err);
+                  };
+                });
+              })
+              User.updateOne({username: req.body.username}, {'$push': {teams: {teamname: req.params.team}}}, (err, result) => {
+                if(err) {
+                  console.log(err);
+                };
+              });
+              console.log("Admin Successfully Added!");
+            } else {
+              console.log("Permission Denied!");
             };
           });
-        })
-        User.updateOne({username: req.body.username}, {'$push': {teams: {teamname: req.params.team}}}, (err, result) => {
-          if(err) {
-            console.log(err);
-          };
-        });
-        console.log("Admin Successfully Added!");
+        }
       } else {
-        console.log("Permission Denied!");
+        console.log("User Not Found!");
       };
     };
   });
