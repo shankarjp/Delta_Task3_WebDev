@@ -82,3 +82,46 @@ li a:hover {
 .stats-createdpolls {
   color: #4ECCA3;
 }
+
+.navbar2-elements:hover {
+  background-color: #4ECCA3;
+}
+.active-home {
+  background-color: #4ECCA3;
+}
+
+.questionlabel-createpoll {
+  display: inline-block;
+  width: 200px;
+}
+.optionslabel-createpoll {
+  display: inline-block;
+  width: 100px;
+}
+.optionsinput-createpoll {
+  display: block;
+}
+.button-createpoll {
+  cursor: pointer;
+}
+.input-createpoll {
+  margin-top: 10px;
+}
+
+.label-addmember {
+  display: inline-block;
+  width: 200px;
+}
+.button-addmember {
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.label-addadmin {
+  display: inline-block;
+  width: 200px;
+}
+.button-addadmin {
+  margin-top: 10px;
+  cursor: pointer;
+}

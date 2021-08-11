@@ -3,18 +3,37 @@
   <head>
     <meta charset="utf-8">
     <title>Add Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
   </head>
   <body>
-    <a href="/">Home</a>
-    <a href="/viewpoll/<%= team %>">Team Dashboard</a>
-    <a href="/createdpolls">My Polls</a>
-    <a href="/logout">Logout</a>
+    <nav class="navbar-home">
+      <ul>
+        <li><a class="active" href="/">Home</a></li>
+        <li><a href="/createteam">Create Team</a></li>
+        <li><a href="/createdpolls">My Polls</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+    </nav>
+    <nav class="navbar-viewpolls">
+      <ul>
+        <li><a class="navbar2-elements" href='/viewpoll/<%= team %>'>View Polls</a></li>
+        <li><a class="navbar2-elements" href='/createpoll/<%= team %>'>Create Poll</a></li>
+        <li><a class="navbar2-elements" href='/addmember/<%= team %>'>Add Member</a></li>
+        <li><a class="active-home navbar2-elements" href='/addadmin/<%= team %>'>Add Admin</a></li>
+        <li><a class="navbar2-elements" href='/'>Back</a></li>
+      </ul>
+    </nav>
     <h1><%= team %></h1>
     <h1>Add Admin</h1>
     <form class="" action='/addadmin/<%= team %>' method="post">
-      <label for="username">Username</label>
-      <input type="text" name="username" value="">
-      <button type="submit" name="button">Add Admin</button>
+      <div class="">
+        <label class="label-addadmin" for="username">Username</label>
+        <input type="text" name="username" value="">
+      </div>
+      <button class="button-addadmin" type="submit" name="button">Add Admin</button>
     </form>
   </body>
 </html>
