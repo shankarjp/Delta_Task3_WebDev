@@ -1,17 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Home Page</title>
-  </head>
-  <body>
-    <a href="/">Home</a>
-    <a href="/createteam">Create Team</a>
-    <a href="/createdpolls">My Polls</a>
-    <a href="/logout">Logout</a>
-    <h1>Teams</h1>
-    <% for(i=0; i<docs.teams.length; i++) { %>
-      <h2><a href='/viewpoll/<%= docs.teams[i].teamname %>'><%= docs.teams[i].teamname %></a></h2>
-    <% } %>
-  </body>
+
+<head>
+  <meta charset="utf-8">
+  <title>Home Page</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+  <nav class="navbar-home">
+    <ul>
+      <li><a class="active" href="/">Home</a></li>
+      <li><a href="/createteam">Create Team</a></li>
+      <li><a href="/createdpolls">My Polls</a></li>
+      <li><a href="/logout">Logout</a></li>
+    </ul>
+  </nav>
+  <h2>Username: <span class="username-home"><%= docs.username %></span></h2>
+  <h1>Teams</h1>
+  <% for(i=0; i<docs.teams.length; i++) { %>
+  <h2><a class="teams-home" href='/viewpoll/<%= docs.teams[i].teamname %>'><%= docs.teams[i].teamname %></a></h2>
+  <% } %>
+</body>
+
 </html>

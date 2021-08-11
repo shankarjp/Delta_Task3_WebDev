@@ -3,16 +3,24 @@
   <head>
     <meta charset="utf-8">
     <title>Login Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
   </head>
   <body>
     <h1>Login Page</h1>
     <form class="" action="/login" method="post">
-      <label for="username">Username</label>
-      <input type="text" name="username" value="">
-      <label for="password">Password</label>
-      <input type="password" name="password" value="">
-      <button type="submit" name="button">Login</button>
+      <div class="input-login">
+        <label class="label-login" for="username">Username</label>
+        <input type="text" name="username" value="">
+      </div>
+      <div class="input-login">
+        <label class="label-login" for="password">Password</label>
+        <input type="password" name="password" value="">
+      </div>
+      <button class="button-login" type="submit" name="button">Login</button>
     </form>
-    <p><a href="/register">Register</a></p>
+    <p><a class="register-login" href="/register">Register</a></p>
   </body>
 </html>

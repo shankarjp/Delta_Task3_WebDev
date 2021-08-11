@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-app.use(express.static("public"));
+app.use(express.static(__dirname + "/public"));
 
 //Database Setup
 mongoose.connect("mongodb://localhost:27017/votingdb", {
@@ -569,7 +569,6 @@ app.get("/", (req, res) => {
         });
       };
     });
-    console.log(`Logged in as ${localStorage.getItem('user')}`);
   } else {
     console.log("Permission Denied!");
     res.redirect("/register");

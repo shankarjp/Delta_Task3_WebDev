@@ -1,0 +1,68 @@
+body {
+  font-family: 'Playfair Display', serif;
+  color: #EDEDED;
+  background-color: #171717;
+}
+ul {
+  list-style: none;
+  padding: 0;
+  overflow: hidden;
+  background-color: #444444;
+}
+li {
+  float: left;
+}
+li a {
+  display: block;
+  width: 100px;
+  padding: 14px 16px;
+  color: #EDEDED;
+  text-decoration: none;
+}
+li a:hover {
+  background-color: #DA0037;
+}
+.active {
+  background-color: #DA0037;
+}
+.username-home {
+  font-weight: lighter;
+}
+.teams-home {
+  color: #51C4D3;
+  text-decoration: none;
+}
+
+.login-register {
+  color: #51C4D3;
+  text-decoration: none;
+  font-size: 20px;
+}
+.input-register {
+  padding-top: 10px;
+}
+.label-register {
+  display: inline-block;
+  width: 200px;
+}
+.button-register {
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.register-login {
+  color: #51C4D3;
+  text-decoration: none;
+  font-size: 20px;
+}
+.input-login {
+  padding-top: 10px;
+}
+.label-login {
+  display: inline-block;
+  width: 200px;
+}
+.button-login {
+  margin-top: 10px;
+  cursor: pointer;
+}
