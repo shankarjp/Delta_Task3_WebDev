@@ -11,8 +11,13 @@
     <h1>Created Polls</h1>
     <% for(let i=0; i<docs.polls.length; i++) { %>
       <h2><%= docs.polls[i].question %></h2>
-      <% for(let j=0; j<n; j++) { %>
+      <% let total = 0; %>
+      <% for(let k=0; k<docs.polls[i].options.length; k++) { %>
+        <% total += docs.polls[i].options[k].votes; %>
+      <% }; %>
+      <% for(let j=0; j<docs.polls[i].options.length; j++) { %>
         <p><%= docs.polls[i].options[j].option %><p>
+          <p><%= ((docs.polls[i].options[j].votes)/total)*100 %>%</p>
       <% } %>
     <% } %>
   </body>
