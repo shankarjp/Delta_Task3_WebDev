@@ -8,11 +8,16 @@ const app = express();
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(express.static("public"));
 
 //Database Setup
-mongoose.connect("mongodb://localhost:27017/votingdb", { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect("mongodb://localhost:27017/votingdb", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
 const optionSchema = new mongoose.Schema({
   option: String,
@@ -26,11 +31,13 @@ const pollSchema = new mongoose.Schema({
   user: String,
   question: String,
   options: [optionSchema],
+  voted: Array,
   created: {
     type: Date,
     default: Date.now
   },
-  teamname: String
+  teamname: String,
+  active: Boolean,
 });
 
 const userSchema = new mongoose.Schema({
@@ -73,7 +80,7 @@ localStorage.setItem('user', 'null');
 
 //Login Page
 app.get("/login", (req, res) => {
-  if(localStorage.getItem('user') !== 'null') {
+  if (localStorage.getItem('user') !== 'null') {
     res.redirect("/");
   } else {
     res.render("login");
@@ -81,11 +88,14 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  User.find({username: req.body.username, password: req.body.password}, (err, docs) => {
-    if(err) {
+  User.find({
+    username: req.body.username,
+    password: req.body.password
+  }, (err, docs) => {
+    if (err) {
       console.log(err);
     } else {
-      if(docs.length !== 0) {
+      if (docs.length !== 0) {
         localStorage.setItem('user', req.body.username);
         res.redirect("/");
       } else {
@@ -102,7 +112,7 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  if(req.body.confirmpassword === req.body.password) {
+  if (req.body.confirmpassword === req.body.password) {
     let user = new User({
       username: req.body.username,
       password: req.body.password
@@ -127,7 +137,7 @@ app.get("/logout", (req, res) => {
 //Create Team Page
 app.get("/createteam", (req, res) => {
   console.log(`Logged in as ${localStorage.getItem('user')}`);
-  if(localStorage.getItem('user') !== 'null') {
+  if (localStorage.getItem('user') !== 'null') {
     res.render("createteam");
   } else {
     res.redirect("/login");
@@ -135,13 +145,17 @@ app.get("/createteam", (req, res) => {
 })
 
 app.post("/createteam", (req, res) => {
-  Team.find({teamname: req.body.teamname}, (err, team) => {
-    if(err) {
+  Team.find({
+    teamname: req.body.teamname
+  }, (err, team) => {
+    if (err) {
       console.log(err);
     } else {
-      if(team.length === 0) {
-        User.findOne({username: localStorage.getItem('user')}, (err, docs) => {
-          if(err) {
+      if (team.length === 0) {
+        User.findOne({
+          username: localStorage.getItem('user')
+        }, (err, docs) => {
+          if (err) {
             console.log(err);
           } else {
             let team = new Team({
@@ -154,8 +168,16 @@ app.post("/createteam", (req, res) => {
             console.log("Team Successfully Created!");
           };
         });
-        User.updateOne({username: localStorage.getItem('user')}, {'$push': {teams: {teamname: req.body.teamname}}}, (err, result) => {
-          if(err) {
+        User.updateOne({
+          username: localStorage.getItem('user')
+        }, {
+          '$push': {
+            teams: {
+              teamname: req.body.teamname
+            }
+          }
+        }, (err, result) => {
+          if (err) {
             console.log(err);
           };
         });
@@ -169,41 +191,63 @@ app.post("/createteam", (req, res) => {
 
 //Add Members page
 app.get("/addmember/:team", (req, res) => {
-  if(localStorage.getItem('user') !== 'null') {
-    res.render("addmember", {team: req.params.team});
+  if (localStorage.getItem('user') !== 'null') {
+    res.render("addmember", {
+      team: req.params.team
+    });
   } else {
     res.redirect("/login");
   };
 });
 
 app.post("/addmember/:team", (req, res) => {
-  User.find({username: req.body.username}, (err, info) => {
-    if(err) {
+  User.find({
+    username: req.body.username
+  }, (err, info) => {
+    if (err) {
       console.log(err);
     } else {
-      if(info.length !== 0) {
+      if (info.length !== 0) {
         teamlist = [];
-        for(let j=0; j< info[0].teams.length; j++) {
+        for (let j = 0; j < info[0].teams.length; j++) {
           teamlist.push(info[0].teams[j].teamname);
         };
-        if(teamlist.includes(req.params.team)) {
+        if (teamlist.includes(req.params.team)) {
           console.log("User Already part of Team!");
         } else {
-          let adminlist= [];
-          Team.findOne({teamname: req.params.team}, (err, docs) => {
-            for(let i=0; i<docs.admins.length; i++) {
+          let adminlist = [];
+          Team.findOne({
+            teamname: req.params.team
+          }, (err, docs) => {
+            for (let i = 0; i < docs.admins.length; i++) {
               adminlist.push(docs.admins[i].username);
             };
-            if(adminlist.includes(localStorage.getItem('user'))) {
-              User.findOne({username: req.body.username}, (err, user) => {
-                Team.updateOne({teamname: req.params.team}, {'$push': {members: user}}, (err, result) => {
-                  if(err) {
+            if (adminlist.includes(localStorage.getItem('user'))) {
+              User.findOne({
+                username: req.body.username
+              }, (err, user) => {
+                Team.updateOne({
+                  teamname: req.params.team
+                }, {
+                  '$push': {
+                    members: user
+                  }
+                }, (err, result) => {
+                  if (err) {
                     console.log(err);
                   };
                 });
               })
-              User.updateOne({username: req.body.username}, {'$push': {teams: {teamname: req.params.team}}}, (err, result) => {
-                if(err) {
+              User.updateOne({
+                username: req.body.username
+              }, {
+                '$push': {
+                  teams: {
+                    teamname: req.params.team
+                  }
+                }
+              }, (err, result) => {
+                if (err) {
                   console.log(err);
                 };
               });
@@ -224,41 +268,63 @@ app.post("/addmember/:team", (req, res) => {
 
 //Add Admins page
 app.get("/addadmin/:team", (req, res) => {
-  if(localStorage.getItem('user') !== 'null') {
-    res.render("addadmin", {team: req.params.team});
+  if (localStorage.getItem('user') !== 'null') {
+    res.render("addadmin", {
+      team: req.params.team
+    });
   } else {
     res.redirect("/login");
   }
 })
 
 app.post("/addadmin/:team", (req, res) => {
-  User.find({username: req.body.username}, (err, info) => {
-    if(err) {
+  User.find({
+    username: req.body.username
+  }, (err, info) => {
+    if (err) {
       console.log(err);
     } else {
-      if(info.length !== 0) {
+      if (info.length !== 0) {
         teamlist = [];
-        for(let j=0; j< info[0].teams.length; j++) {
+        for (let j = 0; j < info[0].teams.length; j++) {
           teamlist.push(info[0].teams[j].teamname);
         };
-        if(teamlist.includes(req.params.team)) {
+        if (teamlist.includes(req.params.team)) {
           console.log("User Already part of Team!");
         } else {
-          let adminlist= [];
-          Team.findOne({teamname: req.params.team}, (err, docs) => {
-            for(let i=0; i<docs.admins.length; i++) {
+          let adminlist = [];
+          Team.findOne({
+            teamname: req.params.team
+          }, (err, docs) => {
+            for (let i = 0; i < docs.admins.length; i++) {
               adminlist.push(docs.admins[i].username);
             };
-            if(adminlist.includes(localStorage.getItem('user'))) {
-              User.findOne({username: req.body.username}, (err, user) => {
-                Team.updateOne({teamname: req.params.team}, {'$push': {admins: user}}, (err, result) => {
-                  if(err) {
+            if (adminlist.includes(localStorage.getItem('user'))) {
+              User.findOne({
+                username: req.body.username
+              }, (err, user) => {
+                Team.updateOne({
+                  teamname: req.params.team
+                }, {
+                  '$push': {
+                    admins: user
+                  }
+                }, (err, result) => {
+                  if (err) {
                     console.log(err);
                   };
                 });
               })
-              User.updateOne({username: req.body.username}, {'$push': {teams: {teamname: req.params.team}}}, (err, result) => {
-                if(err) {
+              User.updateOne({
+                username: req.body.username
+              }, {
+                '$push': {
+                  teams: {
+                    teamname: req.params.team
+                  }
+                }
+              }, (err, result) => {
+                if (err) {
                   console.log(err);
                 };
               });
@@ -280,25 +346,33 @@ app.post("/addadmin/:team", (req, res) => {
 //Create Poll page
 let optionNumber = 1;
 app.get("/createpoll/:team", (req, res) => {
-  if(localStorage.getItem('user') !== 'null') {
+  if (localStorage.getItem('user') !== 'null') {
     optionNumber = 1;
-    res.render("createpoll", {team: req.params.team, n: optionNumber});
+    res.render("createpoll", {
+      team: req.params.team,
+      n: optionNumber
+    });
   } else {
     res.redirect("/login");
   };
-})
+});
 
 app.post("/createpoll/:team", (req, res) => {
   console.log(req.body);
-  if(req.body.action === "add") {
+  if (req.body.action === "add") {
     optionNumber++;
-    res.render("createpoll", {team: req.params.team, n: optionNumber});
+    res.render("createpoll", {
+      team: req.params.team,
+      n: optionNumber
+    });
   } else {
-    Team.findOne({teamname: req.params.team}, (err, docs) => {
-      if(err) {
+    Team.findOne({
+      teamname: req.params.team
+    }, (err, docs) => {
+      if (err) {
         console.log(err);
       } else {
-        if(docs.length !== 0) {
+        if (docs.length !== 0) {
           let poll = new Poll({
             user: localStorage.getItem('user'),
             question: req.body.question,
@@ -306,17 +380,31 @@ app.post("/createpoll/:team", (req, res) => {
               option,
               votes: 0
             })),
-            teamname: req.params.team
+            voted: [],
+            teamname: req.params.team,
+            active: true
           });
           poll.save();
           console.log("Poll successfully added!");
-          Team.updateOne({teamname: req.params.team}, {'$push': {polls: poll}}, (err, result) => {
-            if(err) {
+          Team.updateOne({
+            teamname: req.params.team
+          }, {
+            '$push': {
+              polls: poll
+            }
+          }, (err, result) => {
+            if (err) {
               console.log(err);
             };
           });
-          User.updateOne({username: localStorage.getItem('user')}, {'$push': {polls: poll}}, (err, result) => {
-            if(err) {
+          User.updateOne({
+            username: localStorage.getItem('user')
+          }, {
+            '$push': {
+              polls: poll
+            }
+          }, (err, result) => {
+            if (err) {
               console.log(err);
             };
           });
@@ -331,12 +419,17 @@ app.post("/createpoll/:team", (req, res) => {
 
 //View All Polls Team Dashboard
 app.get("/viewpoll/:team", (req, res) => {
-  if(localStorage.getItem('user') !== 'null') {
-    Poll.find({teamname: req.params.team}, (err, docs) => {
-      if(err) {
+  if (localStorage.getItem('user') !== 'null') {
+    Poll.find({
+      teamname: req.params.team
+    }, (err, docs) => {
+      if (err) {
         console.log(err);
       } else {
-        res.render("viewpoll", {docs: docs, teamname: req.params.team});
+        res.render("viewpoll", {
+          docs: docs,
+          teamname: req.params.team
+        });
       };
     });
   } else {
@@ -344,21 +437,66 @@ app.get("/viewpoll/:team", (req, res) => {
   };
 });
 
+app.post("/viewpoll/:team", (req, res) => {
+  let questionid = null;
+  let targetoption = null;
+  let currentvotes = null;
+  Poll.find({
+      teamname: req.params.team
+    }, (err, docs) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(req.body);
+        console.log(docs);
+        console.log(req.body.action[0]);
+        console.log(req.body.action[1]);
+        console.log(docs[req.body.action[0]]._id);
+        questionid = docs[req.body.action[0]]._id;
+        targetoption = req.body.action[1];
+        currentvotes = parseInt(docs[req.body.action[0]].options[req.body.action[1]].votes);
+        console.log(currentvotes);
+        currentvotes += 1;
+        console.log(currentvotes);
+        Poll.updateOne({_id: questionid}, {'$set': {[`options.${req.body.action[1]}.votes`]: currentvotes}}, (err, result) => {
+          if(err) {
+            console.log(err);
+          };
+          console.log("Inside the Update Block");
+          console.log(result);
+        });
+      };
+  });
+  res.redirect("/");
+});
+
 //View User Created Polls
 app.get("/createdpolls", (req, res) => {
-  if(localStorage.getItem('user') !== 'null') {
-    Poll.find({user: localStorage.getItem('user')}, (err, docs) => {
-      User.updateOne({username: localStorage.getItem('user')}, {'$set': {polls: docs}}, (err, result) => {
-        if(err) {
+  if (localStorage.getItem('user') !== 'null') {
+    Poll.find({
+      user: localStorage.getItem('user')
+    }, (err, docs) => {
+      User.updateOne({
+        username: localStorage.getItem('user')
+      }, {
+        '$set': {
+          polls: docs
+        }
+      }, (err, result) => {
+        if (err) {
           console.log(err);
         };
       });
     });
-    User.findOne({username: localStorage.getItem('user')}, (err, docs) => {
-      if(err) {
+    User.findOne({
+      username: localStorage.getItem('user')
+    }, (err, docs) => {
+      if (err) {
         console.log(err);
       } else {
-        res.render("createdpolls", {docs: docs});
+        res.render("createdpolls", {
+          docs: docs
+        });
       };
     });
     console.log("User Updated");
@@ -367,13 +505,18 @@ app.get("/createdpolls", (req, res) => {
   };
 });
 
+//Home Page
 app.get("/", (req, res) => {
-  if(localStorage.getItem('user') !== 'null') {
-    User.findOne({username: localStorage.getItem('user')}, (err, docs) => {
-      if(err) {
+  if (localStorage.getItem('user') !== 'null') {
+    User.findOne({
+      username: localStorage.getItem('user')
+    }, (err, docs) => {
+      if (err) {
         console.log(err);
       } else {
-        res.render("home", {docs: docs});
+        res.render("home", {
+          docs: docs
+        });
       };
     });
     console.log(`Logged in as ${localStorage.getItem('user')}`);

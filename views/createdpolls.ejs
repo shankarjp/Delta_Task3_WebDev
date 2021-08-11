@@ -11,7 +11,7 @@
     <h1>Created Polls</h1>
     <% for(let i=0; i<docs.polls.length; i++) { %>
       <h2><%= docs.polls[i].question %></h2>
-      <% for(let j=0; j<docs.polls[i].options.length; j++) { %>
+      <% for(let j=0; j<n; j++) { %>
         <p><%= docs.polls[i].options[j].option %><p>
       <% } %>
     <% } %>
