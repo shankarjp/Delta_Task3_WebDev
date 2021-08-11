@@ -9,16 +9,19 @@
     <a href="/createteam">Create Team</a>
     <a href="/logout">Logout</a>
     <h1>Created Polls</h1>
-    <% for(let i=0; i<docs.polls.length; i++) { %>
-      <h2><%= docs.polls[i].question %></h2>
-      <% let total = 0; %>
-      <% for(let k=0; k<docs.polls[i].options.length; k++) { %>
-        <% total += docs.polls[i].options[k].votes; %>
-      <% }; %>
-      <% for(let j=0; j<docs.polls[i].options.length; j++) { %>
-        <p><%= docs.polls[i].options[j].option %><p>
-          <p><%= ((docs.polls[i].options[j].votes)/total)*100 %>%</p>
+    <form class="" action="/createdpolls" method="post">
+      <% for(let i=0; i<docs.polls.length; i++) { %>
+        <h2><%= docs.polls[i].question %></h2>
+        <button type="submit" name="action" value="<%= i %>">End Poll</button>
+        <% let total = 0; %>
+        <% for(let k=0; k<docs.polls[i].options.length; k++) { %>
+          <% total += docs.polls[i].options[k].votes; %>
+        <% }; %>
+        <% for(let j=0; j<docs.polls[i].options.length; j++) { %>
+          <p><%= docs.polls[i].options[j].option %><p>
+            <p><%= ((docs.polls[i].options[j].votes)/total)*100 %>%</p>
+        <% } %>
       <% } %>
-    <% } %>
+    </form>
   </body>
 </html>

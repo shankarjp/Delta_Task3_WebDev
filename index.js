@@ -505,6 +505,25 @@ app.get("/createdpolls", (req, res) => {
   };
 });
 
+app.post("/createdpolls", (req, res) => {
+  console.log(req.body);
+  User.findOne({username: localStorage.getItem('user')}, (err, user) => {
+    if(err) {
+      console.log(err);
+    } else {
+      console.log(user.polls[req.body.action]._id);
+      Poll.updateOne({_id: user.polls[req.body.action]._id}, {'$set': {active: false}}, (err, result) => {
+        if(err) {
+          console.log(err);
+        } else {
+          console.log(result);
+        };
+      });
+    };
+  });
+  res.redirect("/");
+});
+
 //Home Page
 app.get("/", (req, res) => {
   if (localStorage.getItem('user') !== 'null') {
