@@ -12,7 +12,8 @@
     <form class="" action="/createdpolls" method="post">
       <% for(let i=0; i<docs.polls.length; i++) { %>
         <h2><%= docs.polls[i].question %></h2>
-        <button type="submit" name="action" value="<%= i %>">End Poll</button>
+        <% let property = (docs.polls[i].active ? 'visible' : 'hidden') %>
+        <button type="submit" name="action" value="<%= i %>" style="visibility:<%= property %>">End Poll</button>
         <% let total = 0; %>
         <% for(let k=0; k<docs.polls[i].options.length; k++) { %>
           <% total += docs.polls[i].options[k].votes; %>

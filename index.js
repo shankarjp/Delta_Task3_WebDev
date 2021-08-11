@@ -421,7 +421,8 @@ app.post("/createpoll/:team", (req, res) => {
 app.get("/viewpoll/:team", (req, res) => {
   if (localStorage.getItem('user') !== 'null') {
     Poll.find({
-      teamname: req.params.team
+      teamname: req.params.team,
+      active: true
     }, (err, docs) => {
       if (err) {
         console.log(err);
