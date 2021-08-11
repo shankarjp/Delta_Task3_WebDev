@@ -20,7 +20,7 @@
           <h2><%= docs[i].question %></h2>
           <% for(let j=0; j<docs[i].options.length; j++) { %>
             <p><%= docs[i].options[j].option %></p>
-            <button type="submit" name="action" value="<%= i %><%= j %>">Vote</button>
+            <button type="submit" name="action" value="<%= docs[i]._id %><%= j %>">Vote</button>
           <% } %>
       <% } %>
     </form>

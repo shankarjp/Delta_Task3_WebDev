@@ -442,32 +442,85 @@ app.post("/viewpoll/:team", (req, res) => {
   let questionid = null;
   let targetoption = null;
   let currentvotes = null;
-  Poll.find({
-      teamname: req.params.team
-    }, (err, docs) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(req.body);
-        console.log(docs);
-        console.log(req.body.action[0]);
-        console.log(req.body.action[1]);
-        console.log(docs[req.body.action[0]]._id);
-        questionid = docs[req.body.action[0]]._id;
-        targetoption = req.body.action[1];
-        currentvotes = parseInt(docs[req.body.action[0]].options[req.body.action[1]].votes);
-        console.log(currentvotes);
-        currentvotes += 1;
-        console.log(currentvotes);
-        Poll.updateOne({_id: questionid}, {'$set': {[`options.${req.body.action[1]}.votes`]: currentvotes}}, (err, result) => {
-          if(err) {
-            console.log(err);
-          };
-          console.log("Inside the Update Block");
+  Poll.findOne({_id: req.body.action.slice(0,-1)}, (err, docs) => {
+    if(err) {
+      console.log(err);
+    } else {
+      console.log(req.body);
+      console.log(docs);
+      console.log(req.body.action.slice(0,-1));
+      console.log(req.body.action[req.body.action.length - 1]);
+      questionid = req.body.action.slice(0,-1);
+      targetoption = req.body.action[req.body.action.length - 1];
+      currentvotes = parseInt(docs.options[targetoption].votes);
+      console.log(currentvotes);
+      currentvotes += 1;
+      console.log(currentvotes);
+      Poll.updateOne({
+        _id: questionid
+      }, {
+        '$set': {
+          [`options.${targetoption}.votes`]: currentvotes
+        }
+      }, (err, result) => {
+        if (err) {
+          console.log(err);
+        };
+        console.log("Inside the Update Block");
+        console.log(result);
+      });
+      Poll.updateOne({
+        _id: questionid,
+      }, {'$push': { voted: localStorage.getItem('user') }}, (err, result) => {
+        if(err) {
+          console.log(err);
+        } else {
           console.log(result);
-        });
-      };
-  });
+        };
+      });
+    }
+  })
+
+  // Poll.find({
+  //   teamname: req.params.team
+  // }, (err, docs) => {
+  //   if (err) {
+  //     console.log(err);
+  //   } else {
+  //     console.log(req.body);
+  //     console.log(docs);
+  //     console.log(req.body.action.slice(0,-1));
+  //     console.log(req.body.action[req.body.action.length - 1]);
+  //     questionid = req.body.action.slice(0,-1);
+  //     targetoption = req.body.action[req.body.action.length - 1];
+  //     currentvotes = parseInt(docs[req.body.action[0]].options[req.body.action[1]].votes);
+  //     console.log(currentvotes);
+  //     currentvotes += 1;
+  //     console.log(currentvotes);
+  //     Poll.updateOne({
+  //       _id: questionid
+  //     }, {
+  //       '$set': {
+  //         [`options.${req.body.action[1]}.votes`]: currentvotes
+  //       }
+  //     }, (err, result) => {
+  //       if (err) {
+  //         console.log(err);
+  //       };
+  //       console.log("Inside the Update Block");
+  //       console.log(result);
+  //     });
+  //     Poll.updateOne({
+  //       _id: questionid,
+  //     }, {'$push': { voted: localStorage.getItem('user') }}, (err, result) => {
+  //       if(err) {
+  //         console.log(err);
+  //       } else {
+  //         console.log(result);
+  //       };
+  //     });
+  //   };
+  // });
   res.redirect("/");
 });
 
@@ -508,13 +561,21 @@ app.get("/createdpolls", (req, res) => {
 
 app.post("/createdpolls", (req, res) => {
   console.log(req.body);
-  User.findOne({username: localStorage.getItem('user')}, (err, user) => {
-    if(err) {
+  User.findOne({
+    username: localStorage.getItem('user')
+  }, (err, user) => {
+    if (err) {
       console.log(err);
     } else {
       console.log(user.polls[req.body.action]._id);
-      Poll.updateOne({_id: user.polls[req.body.action]._id}, {'$set': {active: false}}, (err, result) => {
-        if(err) {
+      Poll.updateOne({
+        _id: user.polls[req.body.action]._id
+      }, {
+        '$set': {
+          active: false
+        }
+      }, (err, result) => {
+        if (err) {
           console.log(err);
         } else {
           console.log(result);
