@@ -66,3 +66,19 @@ li a:hover {
   margin-top: 10px;
   cursor: pointer;
 }
+
+.button-createteam {
+  margin-top: 10px;
+  cursor: pointer;
+}
+.label-createteam {
+  display: inline-block;
+  width: 200px;
+}
+
+.endpoll-createdpolls {
+  cursor: pointer;
+}
+.stats-createdpolls {
+  color: #4ECCA3;
+}

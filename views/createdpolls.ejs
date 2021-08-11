@@ -3,24 +3,35 @@
   <head>
     <meta charset="utf-8">
     <title>Created Polls</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
   </head>
   <body>
-    <a href="/">Home</a>
-    <a href="/createteam">Create Team</a>
-    <a href="/logout">Logout</a>
+    <nav class="navbar-createdpolls">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/createteam">Create Team</a></li>
+        <li><a class="active" href="/createdpolls">My Polls</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+    </nav>
     <h1>Created Polls</h1>
     <form class="" action="/createdpolls" method="post">
       <% for(let i=0; i<docs.polls.length; i++) { %>
-        <h2><%= docs.polls[i].question %></h2>
         <% let property = (docs.polls[i].active ? 'visible' : 'hidden') %>
-        <button type="submit" name="action" value="<%= i %>" style="visibility:<%= property %>">End Poll</button>
+        <div class="">
+          <h2 class="question-createdpolls"><%= docs.polls[i].question %></h2>
+          <button class="endpoll-createdpolls" type="submit" name="action" value="<%= i %>" style="visibility:<%= property %>">End Poll</button>
+        </div>
         <% let total = 0; %>
         <% for(let k=0; k<docs.polls[i].options.length; k++) { %>
           <% total += docs.polls[i].options[k].votes; %>
         <% }; %>
         <% for(let j=0; j<docs.polls[i].options.length; j++) { %>
           <p><%= docs.polls[i].options[j].option %><p>
-            <p><%= ((docs.polls[i].options[j].votes)/total)*100 %>%</p>
+            <p class="stats-createdpolls"><%= (((docs.polls[i].options[j].votes)/total)*100).toFixed(2) %>%</p>
         <% } %>
       <% } %>
     </form>

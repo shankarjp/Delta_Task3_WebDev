@@ -3,16 +3,27 @@
   <head>
     <meta charset="utf-8">
     <title>Create Team</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
   </head>
   <body>
-    <a href="/">Home</a>
-    <a href="/createdpolls">My Polls</a>
-    <a href="/logout">Logout</a>
+    <nav class="navbar-createteam">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a class="active" href="/createteam">Create Team</a></li>
+        <li><a href="/createdpolls">My Polls</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+    </nav>
     <h1>Create Team</h1>
     <form class="" action="/createteam" method="post">
-      <label for="teamname">Team Name</label>
-      <input type="text" name="teamname" value="">
-      <button type="submit" name="button">Create Team</button>
+      <div class="input-createteam">
+        <label class="label-createteam" for="teamname">Team Name</label>
+        <input type="text" name="teamname" value="">
+      </div>
+      <button class="button-createteam" type="submit" name="button">Create Team</button>
     </form>
   </body>
 </html>
