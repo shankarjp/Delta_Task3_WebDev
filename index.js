@@ -442,85 +442,54 @@ app.post("/viewpoll/:team", (req, res) => {
   let questionid = null;
   let targetoption = null;
   let currentvotes = null;
-  Poll.findOne({_id: req.body.action.slice(0,-1)}, (err, docs) => {
-    if(err) {
+  Poll.findOne({
+    _id: req.body.action.slice(0, -1)
+  }, (err, docs) => {
+    if (err) {
       console.log(err);
     } else {
-      console.log(req.body);
-      console.log(docs);
-      console.log(req.body.action.slice(0,-1));
-      console.log(req.body.action[req.body.action.length - 1]);
-      questionid = req.body.action.slice(0,-1);
-      targetoption = req.body.action[req.body.action.length - 1];
-      currentvotes = parseInt(docs.options[targetoption].votes);
-      console.log(currentvotes);
-      currentvotes += 1;
-      console.log(currentvotes);
-      Poll.updateOne({
-        _id: questionid
-      }, {
-        '$set': {
-          [`options.${targetoption}.votes`]: currentvotes
-        }
-      }, (err, result) => {
-        if (err) {
-          console.log(err);
-        };
-        console.log("Inside the Update Block");
-        console.log(result);
-      });
-      Poll.updateOne({
-        _id: questionid,
-      }, {'$push': { voted: localStorage.getItem('user') }}, (err, result) => {
-        if(err) {
-          console.log(err);
-        } else {
+      if(docs.voted.includes(localStorage.getItem('user'))) {
+        console.log(`${localStorage.getItem('user')} already voted!`);
+      } else {
+        console.log(req.body);
+        console.log(docs);
+        console.log(req.body.action.slice(0, -1));
+        console.log(req.body.action[req.body.action.length - 1]);
+        questionid = req.body.action.slice(0, -1);
+        targetoption = req.body.action[req.body.action.length - 1];
+        currentvotes = parseInt(docs.options[targetoption].votes);
+        console.log(currentvotes);
+        currentvotes += 1;
+        console.log(currentvotes);
+        Poll.updateOne({
+          _id: questionid
+        }, {
+          '$set': {
+            [`options.${targetoption}.votes`]: currentvotes
+          }
+        }, (err, result) => {
+          if (err) {
+            console.log(err);
+          };
+          console.log("Inside the Update Block");
           console.log(result);
-        };
-      });
-    }
-  })
-
-  // Poll.find({
-  //   teamname: req.params.team
-  // }, (err, docs) => {
-  //   if (err) {
-  //     console.log(err);
-  //   } else {
-  //     console.log(req.body);
-  //     console.log(docs);
-  //     console.log(req.body.action.slice(0,-1));
-  //     console.log(req.body.action[req.body.action.length - 1]);
-  //     questionid = req.body.action.slice(0,-1);
-  //     targetoption = req.body.action[req.body.action.length - 1];
-  //     currentvotes = parseInt(docs[req.body.action[0]].options[req.body.action[1]].votes);
-  //     console.log(currentvotes);
-  //     currentvotes += 1;
-  //     console.log(currentvotes);
-  //     Poll.updateOne({
-  //       _id: questionid
-  //     }, {
-  //       '$set': {
-  //         [`options.${req.body.action[1]}.votes`]: currentvotes
-  //       }
-  //     }, (err, result) => {
-  //       if (err) {
-  //         console.log(err);
-  //       };
-  //       console.log("Inside the Update Block");
-  //       console.log(result);
-  //     });
-  //     Poll.updateOne({
-  //       _id: questionid,
-  //     }, {'$push': { voted: localStorage.getItem('user') }}, (err, result) => {
-  //       if(err) {
-  //         console.log(err);
-  //       } else {
-  //         console.log(result);
-  //       };
-  //     });
-  //   };
-  // });
+        });
+        Poll.updateOne({
+          _id: questionid,
+        }, {
+          '$push': {
+            voted: localStorage.getItem('user')
+          }
+        }, (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log(result);
+          };
+        });
+      };
+    };
+  });
   res.redirect("/");
 });
 
@@ -606,9 +575,6 @@ app.get("/", (req, res) => {
     res.redirect("/register");
   };
 });
-
-//Voting page
-
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");
